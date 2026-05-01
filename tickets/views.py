@@ -1,13 +1,36 @@
+from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from .forms import CommentForm, TicketForm
+from .forms import CommentForm, RegistrationForm, TicketForm
 from .models import Ticket
 from .utils import can_edit_ticket, can_view_ticket, get_visible_tickets, is_manager, record_status_change
+
+
+def register(request: HttpRequest) -> HttpResponse:
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+
+    if not getattr(settings, 'ALLOW_REGISTRATION', True):
+        messages.error(request, 'Самостоятельная регистрация временно отключена администратором.')
+        return redirect('login')
+
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, 'Регистрация выполнена. Теперь вы можете создавать и отслеживать заявки.')
+            return redirect('dashboard')
+    else:
+        form = RegistrationForm()
+
+    return render(request, 'registration/register.html', {'form': form})
 
 
 @login_required

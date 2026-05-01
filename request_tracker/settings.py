@@ -149,6 +149,9 @@ LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "login"
 LOGIN_URL = "login"
 
+# Можно выключить открытую регистрацию через ALLOW_REGISTRATION=0.
+ALLOW_REGISTRATION = env_bool("ALLOW_REGISTRATION", default=True)
+
 # Настройки для HTTPS за прокси Vercel.
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True

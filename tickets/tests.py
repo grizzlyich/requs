@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group, User
 from django.test import Client, TestCase
 from django.urls import reverse
 
@@ -14,6 +14,24 @@ class TicketFlowTests(TestCase):
     def test_login_required(self):
         response = self.client.get(reverse('dashboard'))
         self.assertEqual(response.status_code, 302)
+
+    def test_registration_creates_employee_user(self):
+        response = self.client.post(
+            reverse('register'),
+            {
+                'username': 'ivanov_i',
+                'last_name': 'Иванов',
+                'first_name': 'Иван',
+                'email': 'ivanov@example.com',
+                'password1': 'StrongPass12345',
+                'password2': 'StrongPass12345',
+            },
+            follow=True,
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(User.objects.filter(username='ivanov_i').exists())
+        self.assertTrue(Group.objects.filter(name='Сотрудник').exists())
+        self.assertContains(response, 'Регистрация выполнена')
 
     def test_ticket_creation(self):
         self.client.login(username='tester', password='pass12345')

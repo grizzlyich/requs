@@ -8,7 +8,7 @@
         <div class="card shadow-sm border-0">
             <div class="card-body p-4">
                 <h1 class="h4 mb-3">Вход в систему</h1>
-                <p class="text-muted small">Используйте демонстрационный аккаунт из README или создайте своего пользователя через админ-панель.</p>
+                <p class="text-muted small">Используйте демонстрационный аккаунт из README или зарегистрируйте нового пользователя.</p>
                 <form method="post">
                     {% csrf_token %}
                     <div class="mb-3">
@@ -24,6 +24,9 @@
                     {% endif %}
                     <button class="btn btn-primary w-100" type="submit">Войти</button>
                 </form>
+                <div class="text-center small mt-3">
+                    Нет аккаунта? <a href="{% url 'register' %}">Зарегистрироваться</a>
+                </div>
             </div>
         </div>
     </div>

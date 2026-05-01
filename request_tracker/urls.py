@@ -5,6 +5,7 @@ from tickets import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/register/', views.register, name='register'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', views.home_redirect, name='home'),
     path('dashboard/', views.dashboard, name='dashboard'),

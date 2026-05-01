@@ -9,6 +9,7 @@
 ## Что умеет система
 
 - авторизация пользователей;
+- регистрация новых пользователей с автоматическим назначением роли «Сотрудник»;
 - роли пользователей через группы Django;
 - создание и редактирование заявок;
 - назначение исполнителя и проверяющего;
@@ -110,6 +111,7 @@ SEED_DEMO=1
 DJANGO_SUPERUSER_USERNAME=admin_demo
 DJANGO_SUPERUSER_EMAIL=admin_demo@example.com
 DJANGO_SUPERUSER_PASSWORD=admin12345
+ALLOW_REGISTRATION=1
 ```
 
 `RUN_MIGRATIONS=1` включает применение миграций во время сборки.  
@@ -186,4 +188,14 @@ python manage.py createsuperuser
 - `templates/` — HTML-шаблоны;
 - `static/` — стили;
 - `docs/` — вспомогательные материалы для отчёта.
-# requs
+
+## Исправление ошибки Vercel Function Runtimes
+
+Если Vercel выдаёт ошибку:
+
+```text
+Error: Function Runtimes must have a valid version, for example `now-php@1.0.0`.
+```
+
+нужно удалить из `vercel.json` блок с явным указанием runtime `python3.12`.
+Vercel сам определяет Python-приложение по `requirements.txt` и корневому `wsgi.py`, где экспортируется переменная `app`.
