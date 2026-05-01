@@ -7,11 +7,5 @@
       "source": "/(.*)",
       "destination": "/wsgi.py"
     }
-  ],
-  "functions": {
-    "wsgi.py": {
-      "runtime": "python3.12",
-      "maxDuration": 30
-    }
-  }
+  ]
 }
