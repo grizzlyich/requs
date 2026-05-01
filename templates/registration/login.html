@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Вход | RequestTracker{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5 col-lg-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h1 class="h4 mb-3">Вход в систему</h1>
+                <p class="text-muted small">Используйте демонстрационный аккаунт из README или создайте своего пользователя через админ-панель.</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label" for="id_username">Логин</label>
+                        <input type="text" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" class="form-control" required id="id_username">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="id_password">Пароль</label>
+                        <input type="password" name="password" autocomplete="current-password" class="form-control" required id="id_password">
+                    </div>
+                    {% if form.errors %}
+                        <div class="alert alert-danger py-2">Неверный логин или пароль.</div>
+                    {% endif %}
+                    <button class="btn btn-primary w-100" type="submit">Войти</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

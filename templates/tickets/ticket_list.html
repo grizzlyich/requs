@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Список заявок{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Список заявок</h1>
+        <p class="text-muted mb-0">Фильтрация и поиск заявок по номеру, статусу и приоритету.</p>
+    </div>
+    <a href="{% url 'ticket_create' %}" class="btn btn-primary">Новая заявка</a>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Поиск</label>
+                <input class="form-control" type="text" name="q" value="{{ query }}" placeholder="Номер или название">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Статус</label>
+                <select class="form-select" name="status">
+                    <option value="">Все статусы</option>
+                    {% for value, label in status_choices %}
+                        <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Приоритет</label>
+                <select class="form-select" name="priority">
+                    <option value="">Все приоритеты</option>
+                    {% for value, label in priority_choices %}
+                        <option value="{{ value }}" {% if selected_priority == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" value="1" id="overdue" name="overdue" {% if overdue_only %}checked{% endif %}>
+                    <label class="form-check-label" for="overdue">Только просроченные</label>
+                </div>
+            </div>
+            <div class="col-12 d-flex gap-2">
+                <button class="btn btn-primary" type="submit">Применить</button>
+                <a class="btn btn-outline-secondary" href="{% url 'ticket_list' %}">Сбросить</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th>Номер</th>
+                    <th>Название</th>
+                    <th>Подразделение</th>
+                    <th>Приоритет</th>
+                    <th>Статус</th>
+                    <th>Исполнитель</th>
+                    <th>Срок</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for ticket in tickets %}
+                    <tr>
+                        <td><a class="fw-semibold" href="{% url 'ticket_detail' ticket.pk %}">{{ ticket.number }}</a></td>
+                        <td>{{ ticket.title }}</td>
+                        <td>{{ ticket.department.name }}</td>
+                        <td>{{ ticket.get_priority_display }}</td>
+                        <td><span class="badge badge-status status-{{ ticket.status }}">{{ ticket.get_status_display }}</span></td>
+                        <td>{{ ticket.assignee.get_full_name|default:'—' }}</td>
+                        <td>
+                            {% if ticket.due_date %}
+                                <span class="{% if ticket.is_overdue %}text-danger fw-semibold{% endif %}">{{ ticket.due_date|date:'d.m.Y' }}</span>
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="7" class="text-center text-muted py-4">По заданным критериям заявки не найдены.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

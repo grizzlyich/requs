@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Панель управления{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Панель управления</h1>
+        <p class="text-muted mb-0">Краткая сводка по заявкам монтажного отдела.</p>
+    </div>
+    <a href="{% url 'ticket_create' %}" class="btn btn-primary">Создать заявку</a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm stat-card">
+            <div class="card-body">
+                <div class="text-muted small">Всего заявок</div>
+                <div class="display-6 fw-semibold">{{ total_count }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm stat-card">
+            <div class="card-body">
+                <div class="text-muted small">Просроченные</div>
+                <div class="display-6 fw-semibold text-danger">{{ overdue_count }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm stat-card">
+            <div class="card-body">
+                <div class="text-muted small">Высокий приоритет</div>
+                <div class="display-6 fw-semibold text-warning-emphasis">{{ high_priority_count }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm stat-card">
+            <div class="card-body">
+                <div class="text-muted small">На проверке</div>
+                <div class="display-6 fw-semibold">{{ status_counts.on_review }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h5 mb-3">Состояние заявок</h2>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between"><span>Новые</span><strong>{{ status_counts.new }}</strong></li>
+                    <li class="list-group-item d-flex justify-content-between"><span>В работе</span><strong>{{ status_counts.in_progress }}</strong></li>
+                    <li class="list-group-item d-flex justify-content-between"><span>На проверке</span><strong>{{ status_counts.on_review }}</strong></li>
+                    <li class="list-group-item d-flex justify-content-between"><span>Завершены</span><strong>{{ status_counts.completed }}</strong></li>
+                    <li class="list-group-item d-flex justify-content-between"><span>Отклонены</span><strong>{{ status_counts.rejected }}</strong></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h5 mb-0">Последние заявки</h2>
+                    <a href="{% url 'ticket_list' %}" class="small text-decoration-none">Открыть все</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                        <tr>
+                            <th>Номер</th>
+                            <th>Название</th>
+                            <th>Статус</th>
+                            <th>Срок</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for ticket in recent_tickets %}
+                            <tr>
+                                <td><a href="{% url 'ticket_detail' ticket.pk %}">{{ ticket.number }}</a></td>
+                                <td>{{ ticket.title }}</td>
+                                <td><span class="badge badge-status status-{{ ticket.status }}">{{ ticket.get_status_display }}</span></td>
+                                <td>{% if ticket.due_date %}{{ ticket.due_date|date:'d.m.Y' }}{% else %}—{% endif %}</td>
+                            </tr>
+                        {% empty %}
+                            <tr><td colspan="4" class="text-center text-muted">Заявок пока нет.</td></tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
